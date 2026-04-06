@@ -4,6 +4,8 @@ import InputDetails from './components/InputDetails'
 import GeneratedEmail from './components/GeneratedEmail'
 import EmailHistory from './components/EmailHistory'
 
+const BASE_URL = 'https://cold-mailer-3p32.onrender.com'
+
 function App() {
   const [form, setForm] = useState({
     companyName: '',
@@ -44,7 +46,7 @@ function App() {
     const timeoutId = setTimeout(() => controller.abort(), 20000)
 
     try {
-      const res = await fetch('http://localhost:3001/api/generate-email', {
+      const res = await fetch(`${BASE_URL}/api/generate-email`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ companyName, role, background, tone }),
@@ -91,7 +93,7 @@ function App() {
     const timeoutId = setTimeout(() => controller.abort(), 20000)
 
     try {
-      const res = await fetch('http://localhost:3001/api/generate-followup', {
+      const res = await fetch(`${BASE_URL}/api/generate-followup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
