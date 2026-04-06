@@ -56,5 +56,9 @@ ColdMailer is a full-stack web application that helps students and job seekers g
    - Optional explanation / follow-up  
 
 5. Response is displayed in a clean UI
+   
+7.  User can:
+   - Open Gmail with pre-filled subject & body  
+   - Send directly from their email client  
 
 ---
