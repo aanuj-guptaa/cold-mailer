@@ -1,16 +1,60 @@
-# React + Vite
+# 🚀 ColdMailer – AI-Powered Cold Outreach Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+ColdMailer is a full-stack web application that helps students and job seekers generate personalized cold emails for internships and opportunities using AI.
 
-Currently, two official plugins are available:
+🔗 Live App: https://your-vercel-link  
+💻 GitHub: https://github.com/your-username/cold-mailer
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## ✨ Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- 🤖 AI-powered cold email generation
+- 🎯 Tone customization (professional, friendly, bold)
+- 🔁 Follow-up email generation
+- 🧠 Smart personalization (company/role-aware)
+- 📋 Copy to clipboard & Gmail integration
+- 🕓 Email history tracking
+- ⚡ Fast and responsive UI
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🛠️ Tech Stack
+
+**Frontend:**
+- React (Vite)
+- Tailwind CSS / CSS
+
+**Backend:**
+- Node.js
+- Express.js
+
+**AI Integration:**
+- Gemini API (Google)
+
+**Deployment:**
+- Vercel (Frontend)
+- Render (Backend)
+
+---
+
+## 🧠 How It Works
+
+1. User enters:
+   - Company name  
+   - Role  
+   - Background / experience  
+   - Tone  
+
+2. Frontend sends request to backend
+
+3. Backend calls Gemini API
+
+4. AI generates:
+   - Subject line  
+   - Personalized email  
+   - Optional explanation / follow-up  
+
+5. Response is displayed in a clean UI
+
+---
