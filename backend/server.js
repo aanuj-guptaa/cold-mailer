@@ -47,8 +47,8 @@ app.post('/api/upload-resume', upload.single('resume'), async (req, res) => {
             return res.status(400).json({ error: 'No file uploaded.' })
         }
 
-        const parser = new PDFParse({})
-        await parser.load(req.file.buffer)
+        const parser = new PDFParse({ data: new Uint8Array(req.file.buffer) })
+        await parser.load()
         
         // Extract text from all pages
         const pageCount = parser.getInfo().numPages || 0
