@@ -2,7 +2,7 @@ import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
 import multer from 'multer'
-import pdf from 'pdf-parse/lib/pdf-parse.js'
+import { PDFParse } from 'pdf-parse'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 
 const app = express()
@@ -47,8 +47,18 @@ app.post('/api/upload-resume', upload.single('resume'), async (req, res) => {
             return res.status(400).json({ error: 'No file uploaded.' })
         }
 
-        const data = await pdf(req.file.buffer)
-        const text = data.text?.trim()
+        const parser = new PDFParse({})
+        await parser.load(req.file.buffer)
+        
+        // Extract text from all pages
+        const pageCount = parser.getInfo().numPages || 0
+        let fullText = ''
+        for (let i = 1; i <= pageCount; i++) {
+            const pageText = await parser.getPageText(i)
+            fullText += pageText + '\n'
+        }
+        
+        const text = fullText.trim()
 
         if (!text || text.length < 50) {
             return res.status(422).json({ error: 'Could not extract enough text from this PDF. Make sure it is not image-based or password-protected.' })
@@ -57,7 +67,7 @@ app.post('/api/upload-resume', upload.single('resume'), async (req, res) => {
         // Cap at ~8000 chars to keep Gemini context reasonable
         const trimmed = text.length > 8000 ? text.slice(0, 8000) + '\n[...resume truncated]' : text
 
-        res.json({ resumeText: trimmed, pages: data.numpages })
+        res.json({ resumeText: trimmed, pages: pageCount })
     } catch (err) {
         console.error('Resume parse error:', err)
         if (err.message === 'Only PDF files are accepted.') {

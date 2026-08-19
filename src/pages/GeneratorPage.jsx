@@ -5,7 +5,7 @@ import InputDetails from '../components/InputDetails'
 import GeneratedEmail from '../components/GeneratedEmail'
 import EmailHistory from '../components/EmailHistory'
 
-const BASE_URL = 'https://cold-mailer-3p32.onrender.com'
+const BASE_URL = 'http://localhost:3001'
 
 export default function GeneratorPage() {
   const [form, setForm] = useState({
