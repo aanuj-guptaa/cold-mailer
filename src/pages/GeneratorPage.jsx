@@ -23,6 +23,11 @@ export default function GeneratorPage() {
   
   const [dark, setDark] = useState(false)
 
+  // Resume state
+  const [resumeText, setResumeText] = useState('')
+  const [resumeFile, setResumeFile] = useState(null) // filename string
+  const [resumeUploading, setResumeUploading] = useState(false)
+
   const [history, setHistory] = useState(() => {
     const saved = localStorage.getItem('coldmailer_history')
     return saved ? JSON.parse(saved) : []
@@ -32,10 +37,57 @@ export default function GeneratorPage() {
     localStorage.setItem('coldmailer_history', JSON.stringify(history))
   }, [history])
 
+  const handleResumeUpload = async (file) => {
+    if (!file) return
+    if (file.type !== 'application/pdf') {
+      setError('Only PDF files are supported.')
+      return
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setError('File is too large. Max 5 MB.')
+      return
+    }
+
+    setResumeUploading(true)
+    setError(null)
+
+    try {
+      const formData = new FormData()
+      formData.append('resume', file)
+
+      const res = await fetch(`${BASE_URL}/api/upload-resume`, {
+        method: 'POST',
+        body: formData,
+      })
+
+      if (!res.ok) {
+        const data = await res.json()
+        throw new Error(data.error || 'Failed to parse resume.')
+      }
+
+      const data = await res.json()
+      setResumeText(data.resumeText)
+      setResumeFile(file.name)
+    } catch (err) {
+      setError(err.message || 'Failed to upload resume.')
+    } finally {
+      setResumeUploading(false)
+    }
+  }
+
+  const handleResumeClear = () => {
+    setResumeText('')
+    setResumeFile(null)
+  }
+
   const handleGenerate = async () => {
     const { companyName, role, background, tone } = form
-    if (!companyName || !role || !background) {
-      setError('Please fill in Company Name, Role, and Background.')
+    if (!companyName || !role) {
+      setError('Please fill in Company Name and Role.')
+      return
+    }
+    if (!background && !resumeText) {
+      setError('Please upload a resume or provide a candidate background.')
       return
     }
 
@@ -50,7 +102,7 @@ export default function GeneratorPage() {
       const res = await fetch(`${BASE_URL}/api/generate-email`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ companyName, role, background, tone }),
+        body: JSON.stringify({ companyName, role, background, tone, resumeText }),
         signal: controller.signal,
       })
       clearTimeout(timeoutId)
@@ -301,7 +353,17 @@ export default function GeneratorPage() {
 
         {/* Two-panel layout */}
         <div className="flex flex-col md:flex-row gap-6 items-start">
-          <InputDetails form={form} setForm={setForm} onGenerate={handleGenerate} loading={loading} dark={dark} />
+          <InputDetails
+            form={form}
+            setForm={setForm}
+            onGenerate={handleGenerate}
+            loading={loading}
+            dark={dark}
+            resumeFile={resumeFile}
+            onResumeUpload={handleResumeUpload}
+            onResumeClear={handleResumeClear}
+            resumeUploading={resumeUploading}
+          />
           <GeneratedEmail emailData={emailData} loading={loading} onRegenerate={handleGenerate} onFollowup={handleFollowup} followupLoading={followupLoading} dark={dark} />
         </div>
 
