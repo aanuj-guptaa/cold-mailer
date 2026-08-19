@@ -48,17 +48,9 @@ app.post('/api/upload-resume', upload.single('resume'), async (req, res) => {
         }
 
         const parser = new PDFParse({ data: new Uint8Array(req.file.buffer) })
-        await parser.load()
-        
-        // Extract text from all pages
-        const pageCount = parser.getInfo().numPages || 0
-        let fullText = ''
-        for (let i = 1; i <= pageCount; i++) {
-            const pageText = await parser.getPageText(i)
-            fullText += pageText + '\n'
-        }
-        
-        const text = fullText.trim()
+        const parsedResult = await parser.getText()
+        const text = (parsedResult.text || '').trim()
+        const pageCount = parsedResult.pages?.length || 1
 
         if (!text || text.length < 50) {
             return res.status(422).json({ error: 'Could not extract enough text from this PDF. Make sure it is not image-based or password-protected.' })
